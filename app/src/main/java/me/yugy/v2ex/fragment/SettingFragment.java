@@ -75,12 +75,6 @@ public class SettingFragment extends PreferenceFragment implements OnPreferenceC
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(5);
-    }
-
-    @Override
     public boolean onPreferenceClick(final Preference preference) {
         if(preference.getKey().equals(PREF_CONTACT)){
             Intent intent = new Intent(Intent.ACTION_SENDTO);

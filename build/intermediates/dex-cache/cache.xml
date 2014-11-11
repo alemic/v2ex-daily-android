@@ -20,6 +20,12 @@
         revision="21.1.1"
         sha1="e887c6c9b31b39a39b0eaba981448b78902ea813"/>
     <item
+        dex="/Users/yugy/Documents/Github/v2ex-daily-android/app/build/intermediates/pre-dexed/debug/classes-258c74a60d07767e2d0ef0d35611bf2de9c41503.jar"
+        jar="/Users/yugy/Documents/Github/v2ex-daily-android/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.0/classes.jar"
+        jumboMode="false"
+        revision="21.1.1"
+        sha1="95fd37732ec852e99f07eeb516a3650172f1d136"/>
+    <item
         dex="/Users/yugy/Documents/Github/v2ex-daily-android/app/build/intermediates/pre-dexed/debug/classes-9f009c4cae303510bebb8129cbdf021b94f58d51.jar"
         jar="/Users/yugy/Documents/Github/v2ex-daily-android/app/build/intermediates/exploded-aar/com.android.support/support-v13/21.0.0/classes.jar"
         jumboMode="false"

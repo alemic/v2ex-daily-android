@@ -138,12 +138,6 @@ public class NotificationFragment extends Fragment implements OnRefreshListener,
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(4);
-    }
-
-    @Override
     public void onRefreshStarted(View view) {
         if(mToken != null){
             getNotificationData();

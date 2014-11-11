@@ -21,7 +21,7 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:appcompat-v7:21.0.0'
     compile 'com.android.support:support-v13:21.0.0'
     compile 'uk.co.chrisjenx.calligraphy:calligraphy:0.6.0'
     compile 'com.github.chrisbanes.actionbarpulltorefresh:library:0.9.9'

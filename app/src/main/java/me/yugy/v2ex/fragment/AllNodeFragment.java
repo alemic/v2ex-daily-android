@@ -1,12 +1,13 @@
 package me.yugy.v2ex.fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,12 +15,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.SearchView;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+
 import me.yugy.v2ex.R;
-import me.yugy.v2ex.activity.MainActivity;
 import me.yugy.v2ex.activity.NodeActivity;
 import me.yugy.v2ex.adapter.AllNodesAdapter;
 import me.yugy.v2ex.adapter.SearchAllNodeAdapter;
@@ -30,12 +35,6 @@ import me.yugy.v2ex.tasker.AllNodesParseTask;
 import me.yugy.v2ex.utils.DebugUtils;
 import me.yugy.v2ex.widget.AppMsg;
 import me.yugy.v2ex.widget.NodeView;
-
-import org.apache.http.Header;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 /**
  * Created by yugy on 14-2-23.
@@ -113,7 +112,7 @@ public class AllNodeFragment extends Fragment implements
                 return true;
             }
         });
-        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+        MenuItemCompat.setOnActionExpandListener(searchMenuItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 DebugUtils.log("onMenuItemActionExpand");
@@ -181,9 +180,4 @@ public class AllNodeFragment extends Fragment implements
         startActivity(intent);
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(2);
-    }
 }

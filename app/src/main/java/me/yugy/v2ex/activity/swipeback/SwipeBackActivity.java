@@ -2,12 +2,14 @@ package me.yugy.v2ex.activity.swipeback;
 
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.activity.BaseActivity;
 
 public class SwipeBackActivity extends BaseActivity implements SwipeBackActivityBase {
+
     private SwipeBackActivityHelper mHelper;
 
     @Override
@@ -55,5 +57,16 @@ public class SwipeBackActivity extends BaseActivity implements SwipeBackActivity
     public void scrollToFinishActivity() {
         finish();
         overridePendingTransition(R.anim.activity_close_enter, R.anim.activity_close_exit);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                scrollToFinishActivity();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

@@ -186,12 +186,6 @@ public class NewestNodeFragment extends Fragment implements OnRefreshListener, O
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(1);
-    }
-
-    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return mNewestNodeDataHelper.getCursorLoader();
     }

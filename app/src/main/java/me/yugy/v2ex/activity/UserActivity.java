@@ -33,20 +33,4 @@ public class UserActivity extends SwipeBackActivity {
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case android.R.id.home:
-                Intent upIntent = NavUtils.getParentActivityIntent(this);
-                if(NavUtils.shouldUpRecreateTask(this, upIntent)){
-                    TaskStackBuilder.create(this).addNextIntentWithParentStack(upIntent).startActivities();
-                }else{
-                    upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    NavUtils.navigateUpTo(this, upIntent);
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 }

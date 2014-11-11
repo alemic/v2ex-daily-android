@@ -23,8 +23,7 @@
         </provider>
 
         <activity
-            android:name="me.yugy.v2ex.activity.MainActivity"
-            android:theme="@style/AppTheme" >
+            android:name="me.yugy.v2ex.activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,33 +32,17 @@
         </activity>
         <activity android:name=".activity.TopicActivity"
                   android:theme="@style/AppTheme.SwipeBack"
-                  android:icon="@drawable/ic_logo"
-                  android:parentActivityName="me.yugy.v2ex.activity.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
-        </activity>
+                  android:icon="@drawable/ic_logo"/>
         <activity android:name=".activity.NodeActivity"
                   android:theme="@style/AppTheme.SwipeBack"
-                  android:icon="@drawable/ic_logo"
-                  android:parentActivityName="me.yugy.v2ex.activity.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
-        </activity>
+                  android:icon="@drawable/ic_logo"/>
         <activity android:name=".activity.LoginActivity"
                   android:theme="@style/AppTheme.SwipeBack"
                   android:icon="@drawable/ic_logo"
-                  android:label="@string/title_login"
-                  android:parentActivityName="me.yugy.v2ex.activity.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
-        </activity>
+                  android:label="@string/title_login"/>
         <activity android:name=".activity.UserActivity"
                   android:label=""
-                  android:theme="@style/AppTheme.OverlayActionBar"
-                  android:parentActivityName="me.yugy.v2ex.activity.MainActivity">
+                  android:theme="@style/AppTheme.OverlayActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -67,9 +50,6 @@
                 <data android:host="member"
                       android:scheme="v2ex"/>
             </intent-filter>
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
         </activity>
         <activity
             android:name=".activity.PhotoViewActivity"
