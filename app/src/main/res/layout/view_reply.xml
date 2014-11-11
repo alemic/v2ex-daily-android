@@ -17,7 +17,7 @@
         android:src="@drawable/ic_action_reply"
         />
 
-    <com.yugy.v2ex.daily.widget.SelectorImageView
+    <me.yugy.v2ex.widget.SelectorImageView
         android:id="@+id/img_view_reply_head"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -33,7 +33,7 @@
         android:text="name"
         />
 
-    <com.yugy.v2ex.daily.widget.RelativeTimeTextView
+    <me.yugy.v2ex.widget.RelativeTimeTextView
         android:id="@+id/txt_view_reply_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

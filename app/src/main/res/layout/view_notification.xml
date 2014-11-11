@@ -8,7 +8,7 @@
                 android:padding="12dp"
                 >
 
-    <com.yugy.v2ex.daily.widget.RelativeTimeTextView
+    <me.yugy.v2ex.widget.RelativeTimeTextView
         android:id="@+id/txt_view_notification_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -19,7 +19,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
-    <com.yugy.v2ex.daily.widget.photo.PhotoView
+    <me.yugy.v2ex.widget.photo.PhotoView
         android:id="@+id/photo_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

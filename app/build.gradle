@@ -1,41 +1,33 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.1"
+    compileSdkVersion 21
+    buildToolsVersion "21.1.1"
 
     defaultConfig {
+        applicationId 'me.yugy.v2ex'
         minSdkVersion 14
-        targetSdkVersion 19
+        targetSdkVersion 21
         versionCode 6
         versionName "1.3.0"
-    }
-
-    signingConfigs {
-        v2ex {
-            storeFile file('v2ex.jks')
-            storePassword "v2exdaily"
-            keyAlias "v2ex"
-            keyPassword "v2exdaily"
-        }
     }
 
     buildTypes {
         release {
             runProguard true
             proguardFiles 'proguard-rules.txt'
-            signingConfig signingConfigs.v2ex
         }
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:+'
-    compile 'com.android.support:support-v13:+'
-    compile 'uk.co.chrisjenx.calligraphy:calligraphy:+'
-    compile 'com.github.chrisbanes.actionbarpulltorefresh:library:+'
-    compile 'com.etsy.android.grid:library:+'
-    compile 'com.astuetz:pagerslidingtabstrip:+'
-    compile 'com.loopj.android:android-async-http:+'
+    compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.android.support:support-v13:21.0.0'
+    compile 'uk.co.chrisjenx.calligraphy:calligraphy:0.6.0'
+    compile 'com.github.chrisbanes.actionbarpulltorefresh:library:0.9.9'
+    compile 'com.etsy.android.grid:library:1.0.5'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    compile 'com.loopj.android:android-async-http:1.4.6'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
     compile fileTree(dir: 'libs', include: ['*.jar'])
 }

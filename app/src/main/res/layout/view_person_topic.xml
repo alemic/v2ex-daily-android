@@ -68,7 +68,7 @@
 
     </RelativeLayout>
 
-    <com.yugy.v2ex.daily.widget.RelativeTimeTextView
+    <me.yugy.v2ex.widget.RelativeTimeTextView
         android:id="@+id/txt_view_person_topic_time"
         android:layout_width="100dp"
         android:layout_height="wrap_content"

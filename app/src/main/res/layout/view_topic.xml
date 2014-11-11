@@ -36,7 +36,7 @@
         android:textSize="14sp"
         android:textColor="#737373"/>
 
-    <com.yugy.v2ex.daily.widget.SelectorImageView
+    <me.yugy.v2ex.widget.SelectorImageView
         android:id="@+id/img_view_topic_head"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -56,7 +56,7 @@
         android:layout_marginLeft="8dp"
         />
 
-    <com.yugy.v2ex.daily.widget.RelativeTimeTextView
+    <me.yugy.v2ex.widget.RelativeTimeTextView
         android:id="@+id/txt_view_topic_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

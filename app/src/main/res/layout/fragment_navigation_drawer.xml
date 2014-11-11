@@ -6,4 +6,4 @@
     android:divider="#272727"
     android:dividerHeight="1dp"
     android:background="#333"
-    tools:context="com.yugy.v2ex.daily.fragment.NavigationDrawerFragment" />
+    tools:context="me.yugy.v2ex.fragment.NavigationDrawerFragment" />
