@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <View
         android:layout_width="1dp"
@@ -11,14 +11,21 @@
         android:layout_marginLeft="50dp"
         />
 
-    <ListView
-        android:id="@+id/list_fragment_user"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:dividerHeight="0dp"
-        android:scrollbars="none"
-        android:listSelector="@android:color/transparent"
-        android:divider="@android:color/transparent" />
+        android:layout_height="match_parent">
+
+        <ListView
+            android:id="@+id/list_fragment_user"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:dividerHeight="0dp"
+            android:scrollbars="none"
+            android:listSelector="@android:color/transparent"
+            android:divider="@android:color/transparent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <RelativeLayout
         android:id="@+id/header_fragment_user"
@@ -59,4 +66,4 @@
 
     </RelativeLayout>
 
-</uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
+</FrameLayout>

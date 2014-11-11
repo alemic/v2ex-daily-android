@@ -3,7 +3,6 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
-        <item name="ptrHeaderStyle">@style/Widget.Custom.PtrHeader</item>
         <item name="android:windowBackground">@color/window_background</item>
         <item name="colorPrimary">@android:color/white</item>
     </style>
@@ -12,11 +11,10 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
-    <style name="AppTheme.OverlayActionBar" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="AppTheme.OverlayActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowIsTranslucent">true</item>
-        <item name="android:actionBarStyle">@style/ActionBarStyle.Transparent</item>
-        <item name="ptrHeaderStyle">@style/Widget.Custom.PtrHeader</item>
-        <item name="android:windowActionBarOverlay">true</item>
+        <item name="actionBarStyle">@style/ActionBarStyle.Transparent</item>
+        <item name="windowActionBarOverlay">true</item>
         <item name="android:windowBackground">@color/window_background</item>
     </style>
 
@@ -26,13 +24,8 @@
         <item name="android:titleTextStyle">@style/ActionBarStyle.Transparent.TitleTextStyle</item>
     </style>
 
-    <style name="ActionBarStyle.Transparent.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+    <style name="ActionBarStyle.Transparent.TitleTextStyle">
         <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="Widget.Custom.PtrHeader" parent="android:Widget">
-        <!-- Color to tint the progress bar -->
-        <item name="ptrProgressBarColor">#777777</item>
     </style>
 
 </resources>

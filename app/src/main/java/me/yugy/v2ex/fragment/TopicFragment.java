@@ -3,6 +3,7 @@ package me.yugy.v2ex.fragment;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +16,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.adapter.LoadingAdapter;
 import me.yugy.v2ex.model.ReplyModel;
@@ -27,23 +36,12 @@ import me.yugy.v2ex.widget.AppMsg;
 import me.yugy.v2ex.widget.ReplyView;
 import me.yugy.v2ex.widget.TopicView;
 
-import org.apache.http.Header;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-
 /**
  * Created by yugy on 14-2-24.
  */
-public class TopicFragment extends Fragment implements OnRefreshListener{
+public class TopicFragment extends Fragment{
 
-    private PullToRefreshLayout mPullToRefreshLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private TopicView mHeaderView;
     private ListView mListView;
 
@@ -64,20 +62,23 @@ public class TopicFragment extends Fragment implements OnRefreshListener{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mPullToRefreshLayout = (PullToRefreshLayout) inflater.inflate(R.layout.fragment_topic, container, false);
-        mListView = (ListView) mPullToRefreshLayout.findViewById(R.id.list_fragment_topic);
-        mListView.setEmptyView(mPullToRefreshLayout.findViewById(R.id.progress_fragment_topic));
-        return mPullToRefreshLayout;
+        View rootView = inflater.inflate(R.layout.fragment_topic, container, false);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_layout);
+        mListView = (ListView) rootView.findViewById(R.id.list_fragment_topic);
+        mListView.setEmptyView(rootView.findViewById(R.id.progress_fragment_topic));
+        return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ActionBarPullToRefresh.from(getActivity())
-                .allChildrenArePullable()
-                .listener(this)
-                .setup(mPullToRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getTopicData();
+            }
+        });
 
         if(getArguments().containsKey("model")){
             mTopicModel = getArguments().getParcelable("model");
@@ -144,7 +145,7 @@ public class TopicFragment extends Fragment implements OnRefreshListener{
     }
 
     private void getReplyData(){
-        mPullToRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.setRefreshing(true);
         V2EX.getReplies(getActivity(), mTopicModel.id, new JsonHttpResponseHandler(){
 
             @Override
@@ -153,13 +154,13 @@ public class TopicFragment extends Fragment implements OnRefreshListener{
                 DebugUtils.log(response);
                 if(response.length() == 0){
                     mListView.setAdapter(new NoReplyAdapter());
-                    mPullToRefreshLayout.setRefreshComplete();
+                    mSwipeRefreshLayout.setRefreshing(false);
                     return;
                 }
                 try {
                     mReplyModels = getModels(response);
                     mListView.setAdapter(new TopicReplyAdapter(mReplyModels));
-                    mPullToRefreshLayout.setRefreshComplete();
+                    mSwipeRefreshLayout.setRefreshing(false);
                 } catch (JSONException e) {
                     AppMsg.makeText(getActivity(), "Json decode error", AppMsg.STYLE_ALERT).show();
                     e.printStackTrace();
@@ -205,11 +206,6 @@ public class TopicFragment extends Fragment implements OnRefreshListener{
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onRefreshStarted(View view) {
-        getTopicData();
     }
 
     private class TopicReplyAdapter extends BaseAdapter{

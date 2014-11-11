@@ -1,12 +1,12 @@
 package me.yugy.v2ex.fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,14 +15,6 @@ import android.widget.ListView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.TextHttpResponseHandler;
-import me.yugy.v2ex.R;
-import me.yugy.v2ex.activity.MainActivity;
-import me.yugy.v2ex.activity.TopicActivity;
-import me.yugy.v2ex.adapter.NotificationAdapter;
-import me.yugy.v2ex.model.NotificationModel;
-import me.yugy.v2ex.sdk.V2EX;
-import me.yugy.v2ex.utils.DebugUtils;
-import me.yugy.v2ex.utils.MessageUtils;
 
 import org.apache.http.Header;
 import org.json.JSONException;
@@ -32,17 +24,21 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.yugy.v2ex.R;
+import me.yugy.v2ex.activity.TopicActivity;
+import me.yugy.v2ex.adapter.NotificationAdapter;
+import me.yugy.v2ex.model.NotificationModel;
+import me.yugy.v2ex.sdk.V2EX;
+import me.yugy.v2ex.utils.DebugUtils;
+import me.yugy.v2ex.utils.MessageUtils;
 import me.yugy.v2ex.widget.AppMsg;
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 /**
  * Created by yugy on 14-3-13.
  */
-public class NotificationFragment extends Fragment implements OnRefreshListener, AdapterView.OnItemClickListener{
+public class NotificationFragment extends Fragment implements AdapterView.OnItemClickListener{
 
-    private PullToRefreshLayout mPullToRefreshLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private ListView mListView;
 
     private ArrayList<NotificationModel> mModels;
@@ -50,21 +46,26 @@ public class NotificationFragment extends Fragment implements OnRefreshListener,
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mPullToRefreshLayout = (PullToRefreshLayout) inflater.inflate(R.layout.fragment_notification, container, false);
-        mListView = (ListView) mPullToRefreshLayout.findViewById(R.id.list_fragment_notification);
-        mListView.setEmptyView(mPullToRefreshLayout.findViewById(R.id.txt_fragment_notification_empty));
+        View rootView = inflater.inflate(R.layout.fragment_notification, container, false);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_layout);
+        mListView = (ListView) rootView.findViewById(R.id.list_fragment_notification);
+        mListView.setEmptyView(rootView.findViewById(R.id.txt_fragment_notification_empty));
         mListView.setOnItemClickListener(this);
-        return mPullToRefreshLayout;
+        return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ActionBarPullToRefresh.from(getActivity())
-                .listener(this)
-                .allChildrenArePullable()
-                .setup(mPullToRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if(mToken != null){
+                    getNotificationData();
+                }
+            }
+        });
 
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if(sharedPreferences.contains("username")){
@@ -104,7 +105,7 @@ public class NotificationFragment extends Fragment implements OnRefreshListener,
     }
 
     private void getNotificationData(){
-        mPullToRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.setRefreshing(true);
         V2EX.getNotification(getActivity(), mToken, new TextHttpResponseHandler(){
 
             @Override
@@ -132,16 +133,9 @@ public class NotificationFragment extends Fragment implements OnRefreshListener,
                     }
                 }
                 mListView.setAdapter(new NotificationAdapter(getActivity(), mModels));
-                mPullToRefreshLayout.setRefreshComplete();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         });
-    }
-
-    @Override
-    public void onRefreshStarted(View view) {
-        if(mToken != null){
-            getNotificationData();
-        }
     }
 
     @Override

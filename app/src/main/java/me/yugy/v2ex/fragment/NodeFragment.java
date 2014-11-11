@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +17,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.activity.NodeActivity;
 import me.yugy.v2ex.activity.TopicActivity;
@@ -28,23 +37,12 @@ import me.yugy.v2ex.utils.DebugUtils;
 import me.yugy.v2ex.utils.MessageUtils;
 import me.yugy.v2ex.widget.AppMsg;
 
-import org.apache.http.Header;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-
 /**
  * Created by yugy on 14-2-25.
  */
-public class NodeFragment extends Fragment implements OnRefreshListener, AdapterView.OnItemClickListener{
+public class NodeFragment extends Fragment implements AdapterView.OnItemClickListener{
 
-    private PullToRefreshLayout mPullToRefreshLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private ListView mListView;
     private int mNodeId;
     private ArrayList<TopicModel> mModels;
@@ -65,21 +63,24 @@ public class NodeFragment extends Fragment implements OnRefreshListener, Adapter
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mPullToRefreshLayout = (PullToRefreshLayout) inflater.inflate(R.layout.fragment_node, container, false);
-        mListView = (ListView) mPullToRefreshLayout.findViewById(R.id.list_fragment_node);
-        mListView.setEmptyView(mPullToRefreshLayout.findViewById(R.id.progress_fragment_node));
+        View rootView = inflater.inflate(R.layout.fragment_node, container, false);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_layout);
+        mListView = (ListView) rootView.findViewById(R.id.list_fragment_node);
+        mListView.setEmptyView(rootView.findViewById(R.id.progress_fragment_node));
         mListView.setOnItemClickListener(this);
-        return mPullToRefreshLayout;
+        return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ActionBarPullToRefresh.from(getActivity())
-                .allChildrenArePullable()
-                .listener(this)
-                .setup(mPullToRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getData(true);
+            }
+        });
 
         if((mNodeId = getArguments().getInt("node_id", 0)) != 0){
             getData(false);
@@ -159,7 +160,7 @@ public class NodeFragment extends Fragment implements OnRefreshListener, Adapter
                         AppMsg.makeText(getActivity(), "Json decode error", AppMsg.STYLE_ALERT).show();
                         e.printStackTrace();
                     }
-                    mPullToRefreshLayout.setRefreshComplete();
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
             }
 
@@ -182,11 +183,6 @@ public class NodeFragment extends Fragment implements OnRefreshListener, Adapter
             models.add(model);
         }
         return models;
-    }
-
-    @Override
-    public void onRefreshStarted(View view) {
-        getData(true);
     }
 
     @Override

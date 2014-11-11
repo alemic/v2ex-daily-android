@@ -1,6 +1,5 @@
 package me.yugy.v2ex.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;

@@ -1,12 +1,12 @@
 package me.yugy.v2ex.fragment;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +14,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+
 import me.yugy.v2ex.R;
-import me.yugy.v2ex.activity.MainActivity;
 import me.yugy.v2ex.activity.TopicActivity;
 import me.yugy.v2ex.adapter.NewestNodeAdapter;
 import me.yugy.v2ex.dao.datahelper.AllNodesDataHelper;
@@ -28,26 +34,15 @@ import me.yugy.v2ex.utils.DebugUtils;
 import me.yugy.v2ex.widget.AppMsg;
 import me.yugy.v2ex.widget.TopicView;
 
-import org.apache.http.Header;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-
 import static android.widget.AdapterView.OnItemClickListener;
 import static me.yugy.v2ex.adapter.NewestNodeAdapter.OnScrollToBottomListener;
 
 /**
  * Created by yugy on 14-2-23.
  */
-public class NewestNodeFragment extends Fragment implements OnRefreshListener, OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, OnScrollToBottomListener{
+public class NewestNodeFragment extends Fragment implements OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, OnScrollToBottomListener{
 
-    private PullToRefreshLayout mPullToRefreshLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private ListView mListView;
     private AllNodesDataHelper mAllNodesDataHelper;
     private NewestNodeDataHelper mNewestNodeDataHelper;
@@ -58,25 +53,29 @@ public class NewestNodeFragment extends Fragment implements OnRefreshListener, O
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mPullToRefreshLayout = (PullToRefreshLayout) inflater.inflate(R.layout.fragment_node, container, false);
-        mListView = (ListView) mPullToRefreshLayout.findViewById(R.id.list_fragment_node);
-        mListView.setEmptyView(mPullToRefreshLayout.findViewById(R.id.progress_fragment_node));
+        View rootView = inflater.inflate(R.layout.fragment_node, container, false);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_layout);
+        mListView = (ListView) rootView.findViewById(R.id.list_fragment_node);
+        mListView.setEmptyView(rootView.findViewById(R.id.progress_fragment_node));
         mListView.setOnItemClickListener(this);
         mAllNodesDataHelper = new AllNodesDataHelper(getActivity());
         mNewestNodeDataHelper = new NewestNodeDataHelper(getActivity());
         mNewestNodeAdapter = new NewestNodeAdapter(getActivity(), this);
         mListView.setAdapter(mNewestNodeAdapter);
         getLoaderManager().initLoader(0, null, this);
-        return mPullToRefreshLayout;
+        return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ActionBarPullToRefresh.from(getActivity())
-                .allChildrenArePullable()
-                .listener(this)
-                .setup(mPullToRefreshLayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPage = 1;
+                getData();
+            }
+        });
         if(mAllNodesDataHelper.query().length == 0){
             mNewestNodeDataHelper.clear();
             getAllNodesData();
@@ -126,7 +125,7 @@ public class NewestNodeFragment extends Fragment implements OnRefreshListener, O
         if(mPage == 1){
             mLoadFromCache = false;
         }
-        mPullToRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.setRefreshing(true);
         V2EX.getLatestTopics(getActivity(), mPage, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -142,7 +141,7 @@ public class NewestNodeFragment extends Fragment implements OnRefreshListener, O
                     AppMsg.makeText(getActivity(), "Json decode error", AppMsg.STYLE_ALERT).show();
                     e.printStackTrace();
                 }
-                mPullToRefreshLayout.setRefreshComplete();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
@@ -150,17 +149,11 @@ public class NewestNodeFragment extends Fragment implements OnRefreshListener, O
                 e.printStackTrace();
                 if(getActivity() != null) {
                     AppMsg.makeText(getActivity(), "Network error", AppMsg.STYLE_ALERT).show();
-                    mPullToRefreshLayout.setRefreshComplete();
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
                 super.onFailure(statusCode, headers, responseBody, e);
             }
         });
-    }
-
-    @Override
-    public void onRefreshStarted(View view) {
-        mPage = 1;
-        getData();
     }
 
     @Override

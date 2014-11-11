@@ -1,10 +1,12 @@
 package me.yugy.v2ex.fragment;
 
-import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
@@ -38,14 +40,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
-import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
-import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 
 /**
  * Created by yugy on 14-2-25.
  */
-public class UserFragment extends Fragment implements OnRefreshListener, AdapterView.OnItemClickListener{
+public class UserFragment extends Fragment implements AdapterView.OnItemClickListener{
 
     private int mActionBarTitleColor;
     private int mHeaderHeight;
@@ -60,7 +59,7 @@ public class UserFragment extends Fragment implements OnRefreshListener, Adapter
     private AlphaForegroundColorSpan mAlphaForegroundColorSpan;
     private SpannableString mSpannableString;
 
-    private PullToRefreshLayout mPullToRefreshLayout;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private ListView mListView;
     private ImageView mHeaderLogo;
     private TextView mName;
@@ -86,27 +85,29 @@ public class UserFragment extends Fragment implements OnRefreshListener, Adapter
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mPullToRefreshLayout = (PullToRefreshLayout) inflater.inflate(R.layout.fragment_user, container, false);
-        mListView = (ListView) mPullToRefreshLayout.findViewById(R.id.list_fragment_user);
-        mHeader = mPullToRefreshLayout.findViewById(R.id.header_fragment_user);
-        mHeaderLogo = (ImageView) mPullToRefreshLayout.findViewById(R.id.header_logo_fragment_user);
-        mName = (TextView) mPullToRefreshLayout.findViewById(R.id.txt_fragment_user_name);
-        mDescription = (TextView) mPullToRefreshLayout.findViewById(R.id.txt_fragment_user_description);
+        View rootView = inflater.inflate(R.layout.fragment_user, container, false);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_layout);
+        mListView = (ListView) rootView.findViewById(R.id.list_fragment_user);
+        mHeader = rootView.findViewById(R.id.header_fragment_user);
+        mHeaderLogo = (ImageView) rootView.findViewById(R.id.header_logo_fragment_user);
+        mName = (TextView) rootView.findViewById(R.id.txt_fragment_user_name);
+        mDescription = (TextView) rootView.findViewById(R.id.txt_fragment_user_description);
         mPlaceHolderView = getActivity().getLayoutInflater().inflate(R.layout.view_header_placeholder, mListView, false);
         mListView.addHeaderView(mPlaceHolderView, null, false);
         mListView.setOnItemClickListener(this);
-        return mPullToRefreshLayout;
+        return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ActionBarPullToRefresh.from(getActivity())
-                .listener(this)
-                .allChildrenArePullable()
-                .setup(mPullToRefreshLayout);
-
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getData(true);
+            }
+        });
 
         setupActionBar();
 
@@ -184,13 +185,13 @@ public class UserFragment extends Fragment implements OnRefreshListener, Adapter
                         AppMsg.makeText(getActivity(), "Json decode error", AppMsg.STYLE_ALERT).show();
                         e.printStackTrace();
                     }
-                    mPullToRefreshLayout.setRefreshComplete();
+                    mSwipeRefreshLayout.setRefreshing(false);
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseBody, Throwable e) {
                     AppMsg.makeText(getActivity(), "Network error", AppMsg.STYLE_ALERT).show();
-                    mPullToRefreshLayout.setRefreshComplete();
+                    mSwipeRefreshLayout.setRefreshing(false);
                     e.printStackTrace();
                     super.onFailure(statusCode, headers, responseBody, e);
                 }
@@ -257,7 +258,7 @@ public class UserFragment extends Fragment implements OnRefreshListener, Adapter
     }
 
     private void setupActionBar() {
-        ActionBar actionBar = getActivity().getActionBar();
+        ActionBar actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
         actionBar.setIcon(R.drawable.ic_transparent);
 
         //getActionBarTitleView().setAlpha(0f);
@@ -265,11 +266,6 @@ public class UserFragment extends Fragment implements OnRefreshListener, Adapter
 
     private ImageView getActionBarIconView() {
         return (ImageView) getActivity().findViewById(android.R.id.home);
-    }
-
-    @Override
-    public void onRefreshStarted(View view) {
-        getData(true);
     }
 
     @Override
