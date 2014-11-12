@@ -40,8 +40,6 @@ public class NotificationAdapter extends BaseAdapter{
         return position;
     }
 
-    private int mLastPosition = -1;
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         NotificationView item = (NotificationView) convertView;
@@ -49,15 +47,6 @@ public class NotificationAdapter extends BaseAdapter{
             item = new NotificationView(mContext);
         }
         item.parse(getItem(position));
-        if((position > mLastPosition)){
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.setDuration(400).playTogether(
-                    ObjectAnimator.ofFloat(item, View.TRANSLATION_Y, 150, 0),
-                    ObjectAnimator.ofFloat(item, View.ROTATION_X,    8,   0)
-            );
-            animatorSet.start();
-        }
-        mLastPosition = position;
         return item;
     }
 }

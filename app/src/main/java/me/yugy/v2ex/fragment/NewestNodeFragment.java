@@ -10,7 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -21,6 +20,9 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnItemClick;
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.activity.TopicActivity;
 import me.yugy.v2ex.adapter.NewestNodeAdapter;
@@ -32,18 +34,16 @@ import me.yugy.v2ex.sdk.V2EX;
 import me.yugy.v2ex.tasker.AllNodesParseTask;
 import me.yugy.v2ex.utils.DebugUtils;
 import me.yugy.v2ex.widget.AppMsg;
-import me.yugy.v2ex.widget.TopicView;
 
-import static android.widget.AdapterView.OnItemClickListener;
 import static me.yugy.v2ex.adapter.NewestNodeAdapter.OnScrollToBottomListener;
 
 /**
  * Created by yugy on 14-2-23.
  */
-public class NewestNodeFragment extends Fragment implements OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, OnScrollToBottomListener{
+public class NewestNodeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, OnScrollToBottomListener{
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ListView mListView;
+    @InjectView(R.id.refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @InjectView(R.id.list_fragment_node) ListView mListView;
     private AllNodesDataHelper mAllNodesDataHelper;
     private NewestNodeDataHelper mNewestNodeDataHelper;
     private NewestNodeAdapter mNewestNodeAdapter;
@@ -52,23 +52,28 @@ public class NewestNodeFragment extends Fragment implements OnItemClickListener,
     private boolean mLoadFromCache;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_node, container, false);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_layout);
-        mListView = (ListView) rootView.findViewById(R.id.list_fragment_node);
-        mListView.setEmptyView(rootView.findViewById(R.id.progress_fragment_node));
-        mListView.setOnItemClickListener(this);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         mAllNodesDataHelper = new AllNodesDataHelper(getActivity());
         mNewestNodeDataHelper = new NewestNodeDataHelper(getActivity());
         mNewestNodeAdapter = new NewestNodeAdapter(getActivity(), this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_node, container, false);
+        ButterKnife.inject(this, rootView);
+        mListView.setEmptyView(rootView.findViewById(R.id.progress_fragment_node));
         mListView.setAdapter(mNewestNodeAdapter);
-        getLoaderManager().initLoader(0, null, this);
         return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(0, null, this);
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -156,11 +161,9 @@ public class NewestNodeFragment extends Fragment implements OnItemClickListener,
         });
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        TopicView topicView = (TopicView) view;
-        int topicId = topicView.getTopicId();
-        TopicModel topicModel = mNewestNodeDataHelper.select(topicId);
+    @OnItemClick(R.id.list_fragment_node)
+    void onItemClick(int position) {
+        TopicModel topicModel = mNewestNodeAdapter.getItem(position);
         Intent intent = new Intent(getActivity(), TopicActivity.class);
         Bundle argument = new Bundle();
         argument.putParcelable("model", topicModel);

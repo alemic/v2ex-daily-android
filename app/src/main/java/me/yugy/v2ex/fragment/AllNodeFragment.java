@@ -24,6 +24,9 @@ import org.json.JSONArray;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnItemClick;
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.activity.NodeActivity;
 import me.yugy.v2ex.adapter.AllNodesAdapter;
@@ -39,33 +42,37 @@ import me.yugy.v2ex.widget.NodeView;
 /**
  * Created by yugy on 14-2-23.
  */
-public class AllNodeFragment extends Fragment implements
-        AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>{
+public class AllNodeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    private StaggeredGridView mGridView;
+    @InjectView(R.id.grid_fragment_all_node) StaggeredGridView mGridView;
+    @InjectView(R.id.progress_fragment_all_node) View mEmptyView;
+
     private AllNodesDataHelper mAllNodesDataHelper;
     private AllNodesAdapter mAllNodesAdapter;
     private SearchAllNodeAdapter mSearchAllNodeAdapter = null;
-    private View mEmptyView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+        mAllNodesDataHelper = new AllNodesDataHelper(getActivity());
+        mAllNodesAdapter = new AllNodesAdapter(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_all_node, container, false);
-        mGridView = (StaggeredGridView) rootView.findViewById(R.id.grid_fragment_all_node);
-        mEmptyView = rootView.findViewById(R.id.progress_fragment_all_node);
+        ButterKnife.inject(this, rootView);
         mGridView.setEmptyView(mEmptyView);
-        mGridView.setOnItemClickListener(this);
-        mAllNodesDataHelper = new AllNodesDataHelper(getActivity());
-        mAllNodesAdapter = new AllNodesAdapter(getActivity());
         mGridView.setAdapter(mAllNodesAdapter);
-        getLoaderManager().initLoader(0, null, this);
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -94,18 +101,18 @@ public class AllNodeFragment extends Fragment implements
             @Override
             public boolean onQueryTextChange(String newText) {
                 DebugUtils.log("onQueryTextChange: " + newText);
-                if(newText.equals("")){     //删除关键字到空或者初始状态
-                    if(mGridView.getAdapter() instanceof AllNodesAdapter){      //初始状态, do nothing
+                if (newText.equals("")) {     //删除关键字到空或者初始状态
+                    if (mGridView.getAdapter() instanceof AllNodesAdapter) {      //初始状态, do nothing
 
-                    }else if(mGridView.getAdapter() instanceof SearchAllNodeAdapter){       //删除关键字到空，用回AllNodesAdapter
+                    } else if (mGridView.getAdapter() instanceof SearchAllNodeAdapter) {       //删除关键字到空，用回AllNodesAdapter
                         mGridView.setAdapter(mAllNodesAdapter);
                         mSearchAllNodeAdapter = null;
                     }
-                }else{      //有关键字啦
-                    if(mSearchAllNodeAdapter == null){      //SearchAllNodesAdapter 初始化
+                } else {      //有关键字啦
+                    if (mSearchAllNodeAdapter == null) {      //SearchAllNodesAdapter 初始化
                         mSearchAllNodeAdapter = new SearchAllNodeAdapter(getActivity(), newText);
                         mGridView.setAdapter(mSearchAllNodeAdapter);
-                    }else{
+                    } else {
                         mSearchAllNodeAdapter.setKeyword(newText);
                     }
                 }
@@ -170,8 +177,8 @@ public class AllNodeFragment extends Fragment implements
         mAllNodesAdapter.changeCursor(null);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    @OnItemClick(R.id.grid_fragment_all_node)
+    void onItemClick(View view) {
         NodeView item = (NodeView) view;
         Intent intent = new Intent(getActivity(), NodeActivity.class);
         Bundle argument = new Bundle();

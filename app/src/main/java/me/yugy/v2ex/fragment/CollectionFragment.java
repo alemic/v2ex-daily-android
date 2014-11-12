@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.astuetz.PagerSlidingTabStrip;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.adapter.CollectionPagerAdapter;
 import me.yugy.v2ex.dao.datahelper.AllNodesDataHelper;
@@ -20,9 +22,9 @@ import me.yugy.v2ex.model.NodeModel;
  */
 public class CollectionFragment extends Fragment{
 
-    private PagerSlidingTabStrip mPagerSlidingTabStrip;
-    private ViewPager mViewPager;
-    private TextView mEmptyText;
+    @InjectView(R.id.tab_fragment_collection) PagerSlidingTabStrip mPagerSlidingTabStrip;
+    @InjectView(R.id.viewpager_fragment_collection) ViewPager mViewPager;
+    @InjectView(R.id.txt_fragment_collection_empty) TextView mEmptyText;
 
     private AllNodesDataHelper mAllNodesDataHelper;
 
@@ -35,9 +37,7 @@ public class CollectionFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_collection, container, false);
-        mPagerSlidingTabStrip = (PagerSlidingTabStrip) rootView.findViewById(R.id.tab_fragment_collection);
-        mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager_fragment_collection);
-        mEmptyText = (TextView) rootView.findViewById(R.id.txt_fragment_collection_empty);
+        ButterKnife.inject(this, rootView);
         return rootView;
     }
 

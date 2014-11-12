@@ -14,13 +14,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnItemClick;
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.activity.TopicActivity;
 import me.yugy.v2ex.adapter.LoadingAdapter;
@@ -44,12 +47,11 @@ import java.util.ArrayList;
 /**
  * Created by yugy on 14-2-25.
  */
-public class UserFragment extends Fragment implements AdapterView.OnItemClickListener{
+public class UserFragment extends Fragment {
 
     private int mActionBarTitleColor;
     private int mHeaderHeight;
     private int mMinHeaderTranslation;
-    private View mHeader;
     private View mPlaceHolderView;
     private AccelerateDecelerateInterpolator mSmoothInterpolator;
 
@@ -59,11 +61,12 @@ public class UserFragment extends Fragment implements AdapterView.OnItemClickLis
     private AlphaForegroundColorSpan mAlphaForegroundColorSpan;
     private SpannableString mSpannableString;
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ListView mListView;
-    private ImageView mHeaderLogo;
-    private TextView mName;
-    private TextView mDescription;
+    @InjectView(R.id.refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @InjectView(R.id.list_fragment_user) ListView mListView;
+    @InjectView(R.id.header_fragment_user) View mHeader;
+    @InjectView(R.id.header_logo_fragment_user) ImageView mHeaderLogo;
+    @InjectView(R.id.txt_fragment_user_name) TextView mName;
+    @InjectView(R.id.txt_fragment_user_description) TextView mDescription;
 
     private MemberModel mMemberModel;
     private ArrayList<TopicModel> mModels;
@@ -86,15 +89,10 @@ public class UserFragment extends Fragment implements AdapterView.OnItemClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_user, container, false);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_layout);
-        mListView = (ListView) rootView.findViewById(R.id.list_fragment_user);
-        mHeader = rootView.findViewById(R.id.header_fragment_user);
-        mHeaderLogo = (ImageView) rootView.findViewById(R.id.header_logo_fragment_user);
-        mName = (TextView) rootView.findViewById(R.id.txt_fragment_user_name);
-        mDescription = (TextView) rootView.findViewById(R.id.txt_fragment_user_description);
+        ButterKnife.inject(this, rootView);
+
         mPlaceHolderView = getActivity().getLayoutInflater().inflate(R.layout.view_header_placeholder, mListView, false);
         mListView.addHeaderView(mPlaceHolderView, null, false);
-        mListView.setOnItemClickListener(this);
         return rootView;
     }
 
@@ -211,7 +209,7 @@ public class UserFragment extends Fragment implements AdapterView.OnItemClickLis
     private void setTitleAlpha(float alpha) {
         mAlphaForegroundColorSpan.setAlpha(alpha);
         mSpannableString.setSpan(mAlphaForegroundColorSpan, 0, mSpannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        getActivity().getActionBar().setTitle(mSpannableString);
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle(mSpannableString);
         mName.setAlpha(1.0f - alpha);
         mDescription.setAlpha(1.0f - alpha);
     }
@@ -268,8 +266,8 @@ public class UserFragment extends Fragment implements AdapterView.OnItemClickLis
         return (ImageView) getActivity().findViewById(android.R.id.home);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    @OnItemClick(R.id.list_fragment_user)
+    public void onItemClick(int position) {
         if(mDataLoaded){
             Intent intent = new Intent(getActivity(), TopicActivity.class);
             Bundle argument = new Bundle();

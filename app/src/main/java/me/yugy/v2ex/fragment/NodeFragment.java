@@ -155,7 +155,7 @@ public class NodeFragment extends Fragment implements AdapterView.OnItemClickLis
                                 getActivity().getActionBar().setTitle(mModels.get(0).node.title);
                             }
                         }
-                        mListView.setAdapter(new TopicAdapter(getActivity(), mModels));
+                        mListView.setAdapter(new TopicAdapter(mModels));
                     } catch (JSONException e) {
                         AppMsg.makeText(getActivity(), "Json decode error", AppMsg.STYLE_ALERT).show();
                         e.printStackTrace();

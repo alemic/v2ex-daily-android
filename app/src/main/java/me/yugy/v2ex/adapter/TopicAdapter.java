@@ -1,32 +1,29 @@
 package me.yugy.v2ex.adapter;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import me.yugy.v2ex.model.TopicModel;
-import me.yugy.v2ex.widget.TopicView;
-
 import java.util.ArrayList;
+
+import butterknife.ButterKnife;
+import me.yugy.v2ex.R;
+import me.yugy.v2ex.model.TopicModel;
+import me.yugy.v2ex.widget.TopicViewContainer;
 
 /**
  * Created by yugy on 14-2-25.
  */
 public class TopicAdapter extends BaseAdapter {
 
-    private Context mContext;
     private ArrayList<TopicModel> mModels;
 
     /**
      *
-     * @param context
      * @param models
      */
-    public TopicAdapter(Context context, ArrayList<TopicModel> models) {
-        mContext = context;
+    public TopicAdapter(ArrayList<TopicModel> models) {
         mModels = models;
     }
 
@@ -45,24 +42,19 @@ public class TopicAdapter extends BaseAdapter {
         return position;
     }
 
-    private int mLastPosition = -1;
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        TopicView item = (TopicView) convertView;
-        if(item == null){
-            item = new TopicView(mContext);
+        View view = convertView;
+        TopicViewContainer container;
+        if(view == null){
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_topic, parent, false);
+            container = new TopicViewContainer();
+            ButterKnife.inject(container, view);
+            view.setTag(container);
+        }else{
+            container = (TopicViewContainer) view.getTag();
         }
-        item.parse(getItem(position));
-        if((position > mLastPosition)){
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.setDuration(400).playTogether(
-                    ObjectAnimator.ofFloat(item, View.TRANSLATION_Y, 150, 0),
-                    ObjectAnimator.ofFloat(item, View.ROTATION_X,    8,   0)
-            );
-            animatorSet.start();
-        }
-        mLastPosition = position;
-        return item;
+        container.parse(getItem(position));
+        return view;
     }
 }

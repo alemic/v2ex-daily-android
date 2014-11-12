@@ -74,7 +74,7 @@ public class PhotoViewFragment extends Fragment implements
         /**
          * Return {@code true} if the component needs to receive left-to-right
          * touch movements.
-         *
+         *§
          * @param origX the raw x coordinate of the initial touch
          * @param origY the raw y coordinate of the initial touch
          */

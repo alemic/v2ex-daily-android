@@ -1,66 +1,46 @@
 package me.yugy.v2ex.widget;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
-import android.util.AttributeSet;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
+
+import butterknife.InjectView;
 import me.yugy.v2ex.R;
-import me.yugy.v2ex.activity.NodeActivity;
 import me.yugy.v2ex.activity.PhotoViewActivity;
-import me.yugy.v2ex.activity.UserActivity;
 import me.yugy.v2ex.model.MemberModel;
 import me.yugy.v2ex.model.TopicModel;
 import me.yugy.v2ex.network.AsyncImageGetter;
 
-import java.util.ArrayList;
-
 /**
- * Created by yugy on 14-3-15.
+ * Created by yugy on 14/11/12.
  */
-public class PersonTopicView extends RelativeLayout implements View.OnClickListener{
-    public PersonTopicView(Context context) {
-        super(context);
-        init();
-    }
-
-    public PersonTopicView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public PersonTopicView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init();
-    }
-
-    private TextView mTitle;
-    private TextView mContent;
-    private RelativeTimeTextView mTime;
-    private TextView mReplies;
-    private TextView mNode;
+public class TopicViewContainer {
+    @InjectView(R.id.txt_view_topic_title) TextView mTitle;
+    @InjectView(R.id.txt_view_topic_content) TextView mContent;
+    @InjectView(R.id.img_view_topic_head) SelectorImageView mHead;
+    @InjectView(R.id.txt_view_topic_name) TextView mName;
+    @InjectView(R.id.txt_view_topic_time) RelativeTimeTextView mTime;
+    @InjectView(R.id.txt_view_topic_replies) TextView mReplies;
+    @InjectView(R.id.txt_view_topic_node) TextView mNode;
 
     private int mNodeId;
     private int mTopicId;
     private MemberModel mMember;
 
-    private void init(){
-        inflate(getContext(), R.layout.view_person_topic, this);
-        mTitle = (TextView) findViewById(R.id.txt_view_person_topic_title);
-        mContent = (TextView) findViewById(R.id.txt_view_person_topic_content);
-        mTime = (RelativeTimeTextView) findViewById(R.id.txt_view_person_topic_time);
-        mReplies = (TextView) findViewById(R.id.txt_view_person_topic_replies);
-        mNode = (TextView) findViewById(R.id.txt_view_person_topic_node);
-
-        mNode.setOnClickListener(this);
+    public void setViewDetail(){
+        mContent.setMaxLines(Integer.MAX_VALUE);
+        mContent.setTextSize(16);
+        mContent.setLineSpacing(3f, 1.2f);
+        mContent.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     public void parse(TopicModel model){
@@ -92,7 +72,7 @@ public class PersonTopicView extends RelativeLayout implements View.OnClickListe
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    PhotoViewActivity.launch(getContext(), imagePositions.indexOf(start + "," + end), imageUrls);
+                    PhotoViewActivity.launch(mContent.getContext(), imagePositions.indexOf(start + "," + end), imageUrls);
                 }
             };
 
@@ -108,6 +88,7 @@ public class PersonTopicView extends RelativeLayout implements View.OnClickListe
         }
         mContent.setText(spanned);
 
+        mName.setText(model.member.username);
         mTime.setReferenceTime(model.created * 1000);
         mReplies.setText(model.replies + " 个回复");
         mNode.setText(model.node.title);
@@ -115,31 +96,6 @@ public class PersonTopicView extends RelativeLayout implements View.OnClickListe
         mMember = model.member;
         mNodeId = model.node.id;
 
-    }
-
-    public int getTopicId() {
-        return mTopicId;
-    }
-
-    @Override
-    public void onClick(View v) {
-        Intent intent;
-        Bundle argument;
-        switch (v.getId()){
-            case R.id.img_view_topic_head:
-                intent = new Intent(getContext(), UserActivity.class);
-                argument = new Bundle();
-                argument.putParcelable("model", mMember);
-                intent.putExtra("argument", argument);
-                getContext().startActivity(intent);
-                break;
-            case R.id.txt_view_topic_node:
-                intent = new Intent(getContext(), NodeActivity.class);
-                argument = new Bundle();
-                argument.putInt("node_id", mNodeId);
-                intent.putExtra("argument", argument);
-                getContext().startActivity(intent);
-                break;
-        }
+        ImageLoader.getInstance().displayImage(model.member.avatar, mHead);
     }
 }

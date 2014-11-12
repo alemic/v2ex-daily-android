@@ -2,6 +2,7 @@ package me.yugy.v2ex.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
@@ -21,8 +22,13 @@ public class BaseActivity extends ActionBarActivity{
         super.onCreate(savedInstanceState);
         CalligraphyConfig.initDefault("");
         overridePendingTransition(R.anim.activity_open_enter, R.anim.activity_open_exit);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+
+        ActionBar actionBar = getSupportActionBar();
+
+        if(actionBar != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
     }
 
     @Override

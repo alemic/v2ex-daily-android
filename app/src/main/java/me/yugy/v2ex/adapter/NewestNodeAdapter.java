@@ -1,15 +1,16 @@
 package me.yugy.v2ex.adapter;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.database.Cursor;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 
+import butterknife.ButterKnife;
+import me.yugy.v2ex.R;
 import me.yugy.v2ex.model.TopicModel;
-import me.yugy.v2ex.widget.TopicView;
+import me.yugy.v2ex.widget.TopicViewContainer;
 
 /**
  * Created by yugy on 14-3-14.
@@ -33,17 +34,19 @@ public class NewestNodeAdapter extends CursorAdapter{
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return new TopicView(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.view_topic, parent, false);
+        TopicViewContainer container = new TopicViewContainer();
+        ButterKnife.inject(container, view);
+        view.setTag(container);
+        return view;
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TopicView topicView = (TopicView) view;
+        TopicViewContainer container = (TopicViewContainer) view.getTag();
         TopicModel topicModel = TopicModel.fromCursor(cursor, context);
-        topicView.parse(topicModel);
+        container.parse(topicModel);
     }
-
-    private int mLastPosition = -1;
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -52,18 +55,7 @@ public class NewestNodeAdapter extends CursorAdapter{
                 mListener.onScrollToBottom();
             }
         }
-        View view = super.getView(position, convertView, parent);
-        if((position > mLastPosition)){
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.setDuration(400).playTogether(
-                    ObjectAnimator.ofFloat(view, View.TRANSLATION_Y, 150, 0),
-                    ObjectAnimator.ofFloat(view, View.ROTATION_X,    8,   0),
-                    ObjectAnimator.ofFloat(view, View.ALPHA,         0, 1.0f)
-                    );
-            animatorSet.start();
-        }
-        mLastPosition = position;
-        return view;
+        return super.getView(position, convertView, parent);
     }
 
     public static interface OnScrollToBottomListener{

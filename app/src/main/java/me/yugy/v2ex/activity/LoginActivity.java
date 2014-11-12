@@ -16,6 +16,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.activity.swipeback.SwipeBackActivity;
 import me.yugy.v2ex.dao.datahelper.AllNodesDataHelper;
@@ -26,11 +29,11 @@ import me.yugy.v2ex.utils.MessageUtils;
 /**
  * Created by yugy on 14-2-26.
  */
-public class LoginActivity extends SwipeBackActivity implements View.OnClickListener{
+public class LoginActivity extends SwipeBackActivity {
 
-    private EditText mUsername;
-    private EditText mPassword;
-    private Button mLogin;
+    @InjectView(R.id.edit_activity_login_username) EditText mUsername;
+    @InjectView(R.id.edit_activity_login_password) EditText mPassword;
+    @InjectView(R.id.btn_activity_login_login) Button mLogin;
     private ProgressDialog mProgressDialog;
 
     private AllNodesDataHelper mAllNodesDataHelper;
@@ -39,32 +42,28 @@ public class LoginActivity extends SwipeBackActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mUsername = (EditText) findViewById(R.id.edit_activity_login_username);
-        mPassword = (EditText) findViewById(R.id.edit_activity_login_password);
-        mLogin = (Button) findViewById(R.id.btn_activity_login_login);
-        mLogin.setOnClickListener(this);
+
+        ButterKnife.inject(this);
 
         mAllNodesDataHelper = new AllNodesDataHelper(this);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btn_activity_login_login:
-                if(mUsername.getText().length() == 0){
-                    mUsername.setError("Can not be empty");
-                    mUsername.requestFocus();
-                }else if(mPassword.getText().length() == 0){
-                    mPassword.setError("Can not be empty");
-                    mPassword.requestFocus();
-                }else{
-                    getOnceCode();
-                }
-                break;
-            case R.id.txt_activity_login_sign_up:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.v2ex.com/signup")));
-                break;
+    @OnClick(R.id.btn_activity_login_login)
+    void onLoginClick(){
+        if(mUsername.getText().length() == 0){
+            mUsername.setError("Can not be empty");
+            mUsername.requestFocus();
+        }else if(mPassword.getText().length() == 0){
+            mPassword.setError("Can not be empty");
+            mPassword.requestFocus();
+        }else{
+            getOnceCode();
         }
+    }
+
+    @OnClick(R.id.txt_activity_login_sign_up)
+    void onSignUpClick(){
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.v2ex.com/signup")));
     }
 
     private void getOnceCode(){

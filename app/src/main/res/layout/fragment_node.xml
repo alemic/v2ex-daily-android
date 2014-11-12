@@ -12,8 +12,10 @@
             android:id="@+id/list_fragment_node"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:dividerHeight="0dp"
+            android:dividerHeight="8dp"
             android:scrollbars="none"
+            android:padding="8dp"
+            android:clipToPadding="false"
             android:listSelector="@android:color/transparent"
             android:divider="@android:color/transparent"/>
     </android.support.v4.widget.SwipeRefreshLayout>

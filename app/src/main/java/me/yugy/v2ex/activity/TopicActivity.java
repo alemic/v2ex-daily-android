@@ -1,18 +1,12 @@
 package me.yugy.v2ex.activity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.view.MenuItem;
+
+import org.json.JSONObject;
 
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.activity.swipeback.SwipeBackActivity;
-import me.yugy.v2ex.fragment.PostCommentDialogFragment;
 import me.yugy.v2ex.fragment.TopicFragment;
-
-import org.json.JSONObject;
 
 import static me.yugy.v2ex.fragment.PostCommentDialogFragment.OnCommentFinishListener;
 

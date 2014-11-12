@@ -78,7 +78,7 @@ public class ReplyView extends RelativeLayout implements View.OnClickListener{
         mName.setText(replyModel.member.username);
         mTime.setReferenceTime(replyModel.created * 1000);
 
-        Spanned spanned = Html.fromHtml(replyModel.contentRendered, new AsyncImageGetter(getContext(), mContent), null);
+        Spanned spanned = Html.fromHtml(replyModel.contentRendered, new AsyncImageGetter(mContent), null);
         SpannableStringBuilder htmlSpannable;
         if(spanned instanceof SpannableStringBuilder){
             htmlSpannable = (SpannableStringBuilder) spanned;

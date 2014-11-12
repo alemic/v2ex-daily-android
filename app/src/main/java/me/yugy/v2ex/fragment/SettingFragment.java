@@ -14,7 +14,6 @@ import android.preference.PreferenceManager;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.activity.LoginActivity;
-import me.yugy.v2ex.activity.MainActivity;
 import me.yugy.v2ex.dao.datahelper.AllNodesDataHelper;
 import me.yugy.v2ex.sdk.V2EX;
 import me.yugy.v2ex.utils.DebugUtils;
@@ -46,7 +45,7 @@ public class SettingFragment extends PreferenceFragment implements OnPreferenceC
 
     private static final int REQUEST_CODE_LOGIN = 10086;
 
-    private boolean logined = false;
+    private boolean mLogined = false;
 
     private AllNodesDataHelper mAllNodesDataHelper;
 
@@ -56,7 +55,7 @@ public class SettingFragment extends PreferenceFragment implements OnPreferenceC
 
         mAllNodesDataHelper = new AllNodesDataHelper(getActivity());
 
-        if(logined = getPreferenceManager().getSharedPreferences().contains("username")){
+        if(mLogined = getPreferenceManager().getSharedPreferences().contains("username")){
             String username = getPreferenceManager().getSharedPreferences().getString("username", null);
             if(username != null){
                 findPreference(PREF_LOGIN).setTitle(username);
@@ -86,7 +85,7 @@ public class SettingFragment extends PreferenceFragment implements OnPreferenceC
             }
             return true;
         }else if(preference.getKey().equals(PREF_LOGIN)){
-            if(logined){
+            if(mLogined){
                 new AlertDialog.Builder(getActivity())
                         .setCancelable(true)
                         .setMessage("你确定要退出登录吗？")
@@ -144,7 +143,7 @@ public class SettingFragment extends PreferenceFragment implements OnPreferenceC
                 .remove("token")
                 .commit();
         V2EX.logout(getActivity());
-        logined = false;
+        mLogined = false;
         findPreference(PREF_LOGIN).setTitle(getString(R.string.title_login));
         findPreference(PREF_SYNC).setEnabled(false);
         findPreference(PREF_SYNC).setSummary(null);
@@ -155,8 +154,8 @@ public class SettingFragment extends PreferenceFragment implements OnPreferenceC
         if(requestCode == REQUEST_CODE_LOGIN && resultCode == Activity.RESULT_OK){
             String username = data.getStringExtra("username");
             long syncTime = data.getLongExtra("sync_time", 0);
-            logined = username != null;
-            if(logined){
+            mLogined = username != null;
+            if(mLogined){
                 findPreference(PREF_LOGIN).setTitle(username);
                 findPreference(PREF_SYNC).setEnabled(true);
                 if(syncTime != 0){

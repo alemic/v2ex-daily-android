@@ -43,6 +43,6 @@ public class NotificationView extends RelativeLayout{
     public void parse(NotificationModel model){
         mTitle.setText(model.title);
         mTime.setReferenceTime(model.time);
-        mContent.setText(Html.fromHtml(model.content, new AsyncImageGetter(getContext(), mContent), null));
+        mContent.setText(Html.fromHtml(model.content, new AsyncImageGetter(mContent), null));
     }
 }

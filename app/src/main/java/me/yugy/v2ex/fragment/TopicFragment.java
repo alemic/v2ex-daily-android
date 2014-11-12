@@ -24,6 +24,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.adapter.LoadingAdapter;
 import me.yugy.v2ex.model.ReplyModel;
@@ -34,28 +36,28 @@ import me.yugy.v2ex.utils.MessageUtils;
 import me.yugy.v2ex.utils.ScreenUtils;
 import me.yugy.v2ex.widget.AppMsg;
 import me.yugy.v2ex.widget.ReplyView;
-import me.yugy.v2ex.widget.TopicView;
+import me.yugy.v2ex.widget.TopicViewContainer;
 
 /**
  * Created by yugy on 14-2-24.
  */
 public class TopicFragment extends Fragment{
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private TopicView mHeaderView;
-    private ListView mListView;
+    @InjectView(R.id.refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @InjectView(R.id.list_fragment_topic) ListView mListView;
+    private TopicViewContainer mHeaderContainer;
 
     private TopicModel mTopicModel;
     private ArrayList<ReplyModel> mReplyModels;
     private int mTopicId;
 
-    private boolean mLogined = false;
+    private boolean mIsLogin = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLogined = PreferenceManager.getDefaultSharedPreferences(getActivity()).contains("username");
-        if(mLogined){
+        mIsLogin = PreferenceManager.getDefaultSharedPreferences(getActivity()).contains("username");
+        if(mIsLogin){
             setHasOptionsMenu(true);
         }
     }
@@ -63,9 +65,13 @@ public class TopicFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_topic, container, false);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_layout);
-        mListView = (ListView) rootView.findViewById(R.id.list_fragment_topic);
+        ButterKnife.inject(this, rootView);
         mListView.setEmptyView(rootView.findViewById(R.id.progress_fragment_topic));
+        View headerView = inflater.inflate(R.layout.view_topic, mListView, false);
+        mHeaderContainer = new TopicViewContainer();
+        ButterKnife.inject(mHeaderContainer, headerView);
+        mHeaderContainer.setViewDetail();
+        mListView.addHeaderView(headerView, null, false);
         return rootView;
     }
 
@@ -83,10 +89,7 @@ public class TopicFragment extends Fragment{
         if(getArguments().containsKey("model")){
             mTopicModel = getArguments().getParcelable("model");
             mTopicId = mTopicModel.id;
-            mHeaderView = new TopicView(getActivity());
-            mHeaderView.setViewDetail();
-            mHeaderView.parse(mTopicModel);
-            mListView.addHeaderView(mHeaderView, mTopicModel, false);
+            mHeaderContainer.parse(mTopicModel);
             mListView.setAdapter(new LoadingAdapter(getActivity()));
             getReplyData();
         }else if(getArguments().containsKey("topic_id")){
@@ -106,12 +109,7 @@ public class TopicFragment extends Fragment{
                         mTopicModel = new TopicModel();
                     }
                     mTopicModel.parse(response.getJSONObject(0));
-                    if(mHeaderView == null){
-                        mHeaderView = new TopicView(getActivity());
-                        mHeaderView.setViewDetail();
-                        mListView.addHeaderView(mHeaderView, mTopicModel, false);
-                    }
-                    mHeaderView.parse(mTopicModel);
+                    mHeaderContainer.parse(mTopicModel);
                     getReplyData();
                 } catch (JSONException e) {
                     AppMsg.makeText(getActivity(), "Json decode error", AppMsg.STYLE_ALERT).show();
@@ -237,7 +235,7 @@ public class TopicFragment extends Fragment{
             if(item == null){
                 item = new ReplyView(getActivity());
             }
-            item.parse(mLogined, mTopicId, getItem(position));
+            item.parse(mIsLogin, mTopicId, getItem(position));
             return item;
         }
     }

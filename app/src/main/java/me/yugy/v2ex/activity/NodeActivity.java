@@ -1,10 +1,6 @@
 package me.yugy.v2ex.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.view.MenuItem;
 
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.activity.swipeback.SwipeBackActivity;

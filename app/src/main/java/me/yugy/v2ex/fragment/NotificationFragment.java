@@ -10,7 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -24,6 +23,9 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnItemClick;
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.activity.TopicActivity;
 import me.yugy.v2ex.adapter.NotificationAdapter;
@@ -36,10 +38,10 @@ import me.yugy.v2ex.widget.AppMsg;
 /**
  * Created by yugy on 14-3-13.
  */
-public class NotificationFragment extends Fragment implements AdapterView.OnItemClickListener{
+public class NotificationFragment extends Fragment{
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ListView mListView;
+    @InjectView(R.id.refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
+    @InjectView(R.id.list_fragment_notification) ListView mListView;
 
     private ArrayList<NotificationModel> mModels;
     private String mToken;
@@ -47,10 +49,8 @@ public class NotificationFragment extends Fragment implements AdapterView.OnItem
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_notification, container, false);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh_layout);
-        mListView = (ListView) rootView.findViewById(R.id.list_fragment_notification);
+        ButterKnife.inject(this, rootView);
         mListView.setEmptyView(rootView.findViewById(R.id.txt_fragment_notification_empty));
-        mListView.setOnItemClickListener(this);
         return rootView;
     }
 
@@ -138,8 +138,8 @@ public class NotificationFragment extends Fragment implements AdapterView.OnItem
         });
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    @OnItemClick(R.id.list_fragment_notification)
+    void onItemClick(View view, int position) {
         Intent intent = new Intent(getActivity(), TopicActivity.class);
         Bundle argument = new Bundle();
         argument.putInt("topic_id", mModels.get(position).topicId);

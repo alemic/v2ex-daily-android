@@ -20,17 +20,15 @@ import me.yugy.v2ex.utils.ScreenUtils;
  */
 public class AsyncImageGetter implements Html.ImageGetter {
 
-    private Context mContext;
     private TextView mContainer;
     private Drawable mDefaultDrawable;
 
     private int mMaxWidth;
 
-    public AsyncImageGetter(Context context, TextView container){
-        mContext = context;
+    public AsyncImageGetter(TextView container){
         mContainer = container;
-        mMaxWidth = ScreenUtils.getDisplayWidth(mContext) - ScreenUtils.dp(mContext, 100);
-        mDefaultDrawable = context.getResources().getDrawable(R.drawable.ic_launcher);
+        mMaxWidth = ScreenUtils.getDisplayWidth(container.getContext()) - ScreenUtils.dp(container.getContext(), 100);
+        mDefaultDrawable = container.getContext().getResources().getDrawable(R.drawable.ic_launcher);
     }
 
     @Override
@@ -49,7 +47,7 @@ public class AsyncImageGetter implements Html.ImageGetter {
                         width = bitmap.getWidth();
                         height = bitmap.getHeight();
                     }
-                    Drawable drawable = new BitmapDrawable(mContext.getResources(), bitmap);
+                    Drawable drawable = new BitmapDrawable(mContainer.getContext().getResources(), bitmap);
                     drawable.setBounds(0, 0, width, height);
                     urlDrawable.setBounds(0, 0, width, height);
                     urlDrawable.mDrawable = drawable;
