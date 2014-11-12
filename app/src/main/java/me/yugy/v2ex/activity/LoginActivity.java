@@ -33,7 +33,6 @@ public class LoginActivity extends SwipeBackActivity {
 
     @InjectView(R.id.edit_activity_login_username) EditText mUsername;
     @InjectView(R.id.edit_activity_login_password) EditText mPassword;
-    @InjectView(R.id.btn_activity_login_login) Button mLogin;
     private ProgressDialog mProgressDialog;
 
     private AllNodesDataHelper mAllNodesDataHelper;

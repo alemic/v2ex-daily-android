@@ -17,8 +17,8 @@ import me.yugy.v2ex.activity.LoginActivity;
 import me.yugy.v2ex.dao.datahelper.AllNodesDataHelper;
 import me.yugy.v2ex.sdk.V2EX;
 import me.yugy.v2ex.utils.DebugUtils;
+import me.yugy.v2ex.utils.MessageUtils;
 import me.yugy.v2ex.utils.TextUtils;
-import me.yugy.v2ex.widget.AppMsg;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -81,7 +81,7 @@ public class SettingFragment extends PreferenceFragment implements OnPreferenceC
             if(intent.resolveActivity(getActivity().getPackageManager()) != null)
                 startActivity(intent);
             else{
-                AppMsg.makeText(getActivity(), "没有找到邮件程序", AppMsg.STYLE_CONFIRM).show();
+                MessageUtils.toast(getActivity(), "没有找到邮件程序");
             }
             return true;
         }else if(preference.getKey().equals(PREF_LOGIN)){

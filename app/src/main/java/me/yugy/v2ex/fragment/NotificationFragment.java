@@ -33,7 +33,6 @@ import me.yugy.v2ex.model.NotificationModel;
 import me.yugy.v2ex.sdk.V2EX;
 import me.yugy.v2ex.utils.DebugUtils;
 import me.yugy.v2ex.utils.MessageUtils;
-import me.yugy.v2ex.widget.AppMsg;
 
 /**
  * Created by yugy on 14-3-13.
@@ -111,7 +110,7 @@ public class NotificationFragment extends Fragment{
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 throwable.printStackTrace();
-                AppMsg.makeText(getActivity(), "Network error", AppMsg.STYLE_ALERT).show();
+                MessageUtils.toast(getActivity(), "Network error");
             }
 
             @Override

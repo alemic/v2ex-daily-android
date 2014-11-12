@@ -14,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.etsy.android.grid.StaggeredGridView;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -36,7 +35,7 @@ import me.yugy.v2ex.model.NodeModel;
 import me.yugy.v2ex.sdk.V2EX;
 import me.yugy.v2ex.tasker.AllNodesParseTask;
 import me.yugy.v2ex.utils.DebugUtils;
-import me.yugy.v2ex.widget.AppMsg;
+import me.yugy.v2ex.utils.MessageUtils;
 import me.yugy.v2ex.widget.NodeView;
 
 /**
@@ -156,7 +155,7 @@ public class AllNodeFragment extends Fragment implements LoaderManager.LoaderCal
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseBody, Throwable e) {
                 e.printStackTrace();
-                AppMsg.makeText(getActivity(), "Network error", AppMsg.STYLE_ALERT).show();
+                MessageUtils.toast(getActivity(), "Network error");
                 super.onFailure(statusCode, headers, responseBody, e);
             }
         });

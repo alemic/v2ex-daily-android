@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import me.yugy.v2ex.model.NodeModel;
-import me.yugy.v2ex.widget.AppMsg;
+import me.yugy.v2ex.utils.MessageUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +27,7 @@ public abstract class AllNodesParseTask extends AsyncTask<JSONArray, Void, Array
         try {
             return getModels(params[0]);
         } catch (JSONException e) {
-            AppMsg.makeText(mContext, "Json decode error", AppMsg.STYLE_ALERT).show();
+            MessageUtils.toast(mContext, "Json decode error");
             e.printStackTrace();
         }
         return null;

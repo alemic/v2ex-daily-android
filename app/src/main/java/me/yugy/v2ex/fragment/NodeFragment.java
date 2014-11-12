@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,7 +36,6 @@ import me.yugy.v2ex.model.TopicModel;
 import me.yugy.v2ex.sdk.V2EX;
 import me.yugy.v2ex.utils.DebugUtils;
 import me.yugy.v2ex.utils.MessageUtils;
-import me.yugy.v2ex.widget.AppMsg;
 
 /**
  * Created by yugy on 14-2-25.
@@ -152,12 +152,12 @@ public class NodeFragment extends Fragment implements AdapterView.OnItemClickLis
                         mModels = getModels(response);
                         if(getActivity() instanceof NodeActivity){
                             if(mModels.size() != 0){
-                                getActivity().getActionBar().setTitle(mModels.get(0).node.title);
+                                ((ActionBarActivity)getActivity()).getSupportActionBar().setTitle(mModels.get(0).node.title);
                             }
                         }
                         mListView.setAdapter(new TopicAdapter(mModels));
                     } catch (JSONException e) {
-                        AppMsg.makeText(getActivity(), "Json decode error", AppMsg.STYLE_ALERT).show();
+                        MessageUtils.toast(getActivity(), "Json decode error");
                         e.printStackTrace();
                     }
                     mSwipeRefreshLayout.setRefreshing(false);
@@ -167,7 +167,7 @@ public class NodeFragment extends Fragment implements AdapterView.OnItemClickLis
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseBody, Throwable e) {
                 if(getActivity() != null) {
-                    AppMsg.makeText(getActivity(), "Network error", AppMsg.STYLE_ALERT).show();
+                    MessageUtils.toast(getActivity(), "Network error");
                 }
                 e.printStackTrace();
                 super.onFailure(statusCode, headers, responseBody, e);

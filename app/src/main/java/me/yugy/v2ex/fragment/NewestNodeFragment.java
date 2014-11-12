@@ -33,7 +33,7 @@ import me.yugy.v2ex.model.TopicModel;
 import me.yugy.v2ex.sdk.V2EX;
 import me.yugy.v2ex.tasker.AllNodesParseTask;
 import me.yugy.v2ex.utils.DebugUtils;
-import me.yugy.v2ex.widget.AppMsg;
+import me.yugy.v2ex.utils.MessageUtils;
 
 import static me.yugy.v2ex.adapter.NewestNodeAdapter.OnScrollToBottomListener;
 
@@ -109,7 +109,7 @@ public class NewestNodeFragment extends Fragment implements LoaderManager.Loader
             public void onFailure(int statusCode, Header[] headers, String responseBody, Throwable e) {
                 e.printStackTrace();
                 if(getActivity() != null) {
-                    AppMsg.makeText(getActivity(), "Network error", AppMsg.STYLE_ALERT).show();
+                    MessageUtils.toast(getActivity(), "Network error");
                 }
                 super.onFailure(statusCode, headers, responseBody, e);
             }
@@ -143,7 +143,7 @@ public class NewestNodeFragment extends Fragment implements LoaderManager.Loader
                     mNewestNodeDataHelper.bulkInsert(getModels(response));
                     mPage++;
                 } catch (JSONException e) {
-                    AppMsg.makeText(getActivity(), "Json decode error", AppMsg.STYLE_ALERT).show();
+                    MessageUtils.toast(getActivity(), "Json decode error");
                     e.printStackTrace();
                 }
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -153,7 +153,7 @@ public class NewestNodeFragment extends Fragment implements LoaderManager.Loader
             public void onFailure(int statusCode, Header[] headers, String responseBody, Throwable e) {
                 e.printStackTrace();
                 if(getActivity() != null) {
-                    AppMsg.makeText(getActivity(), "Network error", AppMsg.STYLE_ALERT).show();
+                    MessageUtils.toast(getActivity(), "Network error");
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
                 super.onFailure(statusCode, headers, responseBody, e);

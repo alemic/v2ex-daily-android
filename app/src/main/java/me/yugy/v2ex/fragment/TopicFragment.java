@@ -34,7 +34,6 @@ import me.yugy.v2ex.sdk.V2EX;
 import me.yugy.v2ex.utils.DebugUtils;
 import me.yugy.v2ex.utils.MessageUtils;
 import me.yugy.v2ex.utils.ScreenUtils;
-import me.yugy.v2ex.widget.AppMsg;
 import me.yugy.v2ex.widget.ReplyViewContainer;
 import me.yugy.v2ex.widget.TopicViewContainer;
 
@@ -112,7 +111,7 @@ public class TopicFragment extends Fragment{
                     mHeaderContainer.parse(mTopicModel);
                     getReplyData();
                 } catch (JSONException e) {
-                    AppMsg.makeText(getActivity(), "Json decode error", AppMsg.STYLE_ALERT).show();
+                    MessageUtils.toast(getActivity(), "Json decode error");
                     e.printStackTrace();
                 }
             }
@@ -120,7 +119,7 @@ public class TopicFragment extends Fragment{
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseBody, Throwable e) {
                 if(getActivity() != null){
-                    AppMsg.makeText(getActivity(), "Network error", AppMsg.STYLE_ALERT).show();
+                    MessageUtils.toast(getActivity(), "Network error");
                 }
                 e.printStackTrace();
                 super.onFailure(statusCode, headers, responseBody, e);
@@ -160,7 +159,7 @@ public class TopicFragment extends Fragment{
                     mListView.setAdapter(new TopicReplyAdapter(mReplyModels));
                     mSwipeRefreshLayout.setRefreshing(false);
                 } catch (JSONException e) {
-                    AppMsg.makeText(getActivity(), "Json decode error", AppMsg.STYLE_ALERT).show();
+                    MessageUtils.toast(getActivity(), "Json decode error");
                     e.printStackTrace();
                 }
             }
@@ -168,7 +167,7 @@ public class TopicFragment extends Fragment{
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseBody, Throwable e) {
                 if(getActivity() != null){
-                    AppMsg.makeText(getActivity(), "Network error", AppMsg.STYLE_ALERT).show();
+                    MessageUtils.toast(getActivity(), "Network error");
                 }
                 e.printStackTrace();
                 super.onFailure(statusCode, headers, responseBody, e);
