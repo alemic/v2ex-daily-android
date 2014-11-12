@@ -1,7 +1,6 @@
 package me.yugy.v2ex.widget;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
@@ -10,13 +9,16 @@ import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
-import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
+
+import butterknife.InjectView;
+import butterknife.OnClick;
 import me.yugy.v2ex.R;
 import me.yugy.v2ex.activity.PhotoViewActivity;
 import me.yugy.v2ex.activity.UserActivity;
@@ -25,54 +27,25 @@ import me.yugy.v2ex.model.MemberModel;
 import me.yugy.v2ex.model.ReplyModel;
 import me.yugy.v2ex.network.AsyncImageGetter;
 
-import java.util.ArrayList;
-
 /**
- * Created by yugy on 14-2-25.
+ * Created by yugy on 14/11/12.
  */
-public class ReplyView extends RelativeLayout implements View.OnClickListener{
-    public ReplyView(Context context) {
-        super(context);
-        init();
-    }
+public class ReplyViewContainer {
 
-    public ReplyView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public ReplyView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init();
-    }
-
-    private SelectorImageView mHead;
-    private TextView mName;
-    private ImageButton mReply;
-    private RelativeTimeTextView mTime;
-    private TextView mContent;
+    @InjectView(R.id.img_view_reply_head) SelectorImageView mHead;
+    @InjectView(R.id.btn_view_reply_reply) TextView mName;
+    @InjectView(R.id.txt_view_reply_name) ImageButton mReply;
+    @InjectView(R.id.txt_view_reply_time) RelativeTimeTextView mTime;
+    @InjectView(R.id.txt_view_reply_content) TextView mContent;
 
     private MemberModel mMember;
-
     private int mTopicId;
-
-    private void init(){
-        inflate(getContext(), R.layout.view_reply, this);
-        mHead = (SelectorImageView) findViewById(R.id.img_view_reply_head);
-        mReply = (ImageButton) findViewById(R.id.btn_view_reply_reply);
-        mName = (TextView) findViewById(R.id.txt_view_reply_name);
-        mTime = (RelativeTimeTextView) findViewById(R.id.txt_view_reply_time);
-        mContent = (TextView) findViewById(R.id.txt_view_reply_content);
-
-        mHead.setOnClickListener(this);
-        mReply.setOnClickListener(this);
-    }
 
     public void parse(boolean logined, int topicId, ReplyModel replyModel){
         if(logined){
-            mReply.setVisibility(VISIBLE);
+            mReply.setVisibility(View.VISIBLE);
         }else{
-            mReply.setVisibility(INVISIBLE);
+            mReply.setVisibility(View.INVISIBLE);
         }
         mTopicId = topicId;
         mName.setText(replyModel.member.username);
@@ -105,7 +78,7 @@ public class ReplyView extends RelativeLayout implements View.OnClickListener{
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    PhotoViewActivity.launch(getContext(), imagePositions.indexOf(start + "," + end), imageUrls);
+                    PhotoViewActivity.launch(mContent.getContext(), imagePositions.indexOf(start + "," + end), imageUrls);
                 }
             };
 
@@ -127,26 +100,22 @@ public class ReplyView extends RelativeLayout implements View.OnClickListener{
         ImageLoader.getInstance().displayImage(replyModel.member.avatar, mHead);
     }
 
-    @Override
-    public void onClick(View v) {
-        Bundle argument;
-        switch (v.getId()){
-            case R.id.img_view_reply_head:
-                Intent intent = new Intent(getContext(), UserActivity.class);
-                argument = new Bundle();
-                argument.putParcelable("model", mMember);
-                intent.putExtra("argument", argument);
-                getContext().startActivity(intent);
-                break;
-            case R.id.btn_view_reply_reply:
-                CommentDialogFragment commentDialogFragment = new CommentDialogFragment();
-                argument = new Bundle();
-                argument.putInt("topic_id", mTopicId);
-                argument.putString("comment_content", "@" + mMember.username + " ");
-                commentDialogFragment.setArguments(argument);
-                commentDialogFragment.show(((Activity)getContext()).getFragmentManager(), "comment");
-                break;
-        }
+    @OnClick(R.id.img_view_reply_head)
+    void onHeadIconClick(){
+        Intent intent = new Intent(mContent.getContext(), UserActivity.class);
+        Bundle argument = new Bundle();
+        argument.putParcelable("model", mMember);
+        intent.putExtra("argument", argument);
+        mContent.getContext().startActivity(intent);
+    }
 
+    @OnClick(R.id.btn_view_reply_reply)
+    void onReplyClick(){
+        CommentDialogFragment commentDialogFragment = new CommentDialogFragment();
+        Bundle argument = new Bundle();
+        argument.putInt("topic_id", mTopicId);
+        argument.putString("comment_content", "@" + mMember.username + " ");
+        commentDialogFragment.setArguments(argument);
+        commentDialogFragment.show(((Activity)mContent.getContext()).getFragmentManager(), "comment");
     }
 }

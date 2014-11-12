@@ -1,5 +1,7 @@
 package me.yugy.v2ex.widget;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -14,8 +16,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.ArrayList;
 
 import butterknife.InjectView;
+import butterknife.OnClick;
 import me.yugy.v2ex.R;
+import me.yugy.v2ex.activity.NodeActivity;
 import me.yugy.v2ex.activity.PhotoViewActivity;
+import me.yugy.v2ex.activity.UserActivity;
 import me.yugy.v2ex.model.MemberModel;
 import me.yugy.v2ex.model.TopicModel;
 import me.yugy.v2ex.network.AsyncImageGetter;
@@ -33,7 +38,6 @@ public class TopicViewContainer {
     @InjectView(R.id.txt_view_topic_node) TextView mNode;
 
     private int mNodeId;
-    private int mTopicId;
     private MemberModel mMember;
 
     public void setViewDetail(){
@@ -44,7 +48,6 @@ public class TopicViewContainer {
     }
 
     public void parse(TopicModel model){
-        mTopicId = model.id;
         mTitle.setText(model.title);
         Spanned spanned = Html.fromHtml(model.contentRendered, new AsyncImageGetter(mContent), null);
         SpannableStringBuilder htmlSpannable;
@@ -98,4 +101,23 @@ public class TopicViewContainer {
 
         ImageLoader.getInstance().displayImage(model.member.avatar, mHead);
     }
+
+    @OnClick(R.id.img_view_topic_head)
+    void onHeadIconClick(){
+        Intent intent = new Intent(mContent.getContext(), UserActivity.class);
+        Bundle argument = new Bundle();
+        argument.putParcelable("model", mMember);
+        intent.putExtra("argument", argument);
+        mContent.getContext().startActivity(intent);
+    }
+
+    @OnClick(R.id.txt_view_topic_node)
+    void onNodeClick(){
+        Intent intent = new Intent(mContent.getContext(), NodeActivity.class);
+        Bundle argument = new Bundle();
+        argument.putInt("node_id", mNodeId);
+        intent.putExtra("argument", argument);
+        mContent.getContext().startActivity(intent);
+    }
+
 }

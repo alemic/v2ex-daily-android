@@ -35,7 +35,7 @@ import me.yugy.v2ex.utils.DebugUtils;
 import me.yugy.v2ex.utils.MessageUtils;
 import me.yugy.v2ex.utils.ScreenUtils;
 import me.yugy.v2ex.widget.AppMsg;
-import me.yugy.v2ex.widget.ReplyView;
+import me.yugy.v2ex.widget.ReplyViewContainer;
 import me.yugy.v2ex.widget.TopicViewContainer;
 
 /**
@@ -231,12 +231,18 @@ public class TopicFragment extends Fragment{
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ReplyView item = (ReplyView) convertView;
-            if(item == null){
-                item = new ReplyView(getActivity());
+            View view = convertView;
+            ReplyViewContainer container;
+            if(view == null){
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_reply, parent, false);
+                container = new ReplyViewContainer();
+                ButterKnife.inject(container, view);
+                view.setTag(container);
+            }else{
+                container = (ReplyViewContainer) view.getTag();
             }
-            item.parse(mIsLogin, mTopicId, getItem(position));
-            return item;
+            container.parse(mIsLogin, mTopicId, getItem(position));
+            return view;
         }
     }
 
