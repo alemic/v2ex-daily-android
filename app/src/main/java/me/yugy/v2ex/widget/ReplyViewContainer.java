@@ -33,8 +33,8 @@ import me.yugy.v2ex.network.AsyncImageGetter;
 public class ReplyViewContainer {
 
     @InjectView(R.id.img_view_reply_head) SelectorImageView mHead;
-    @InjectView(R.id.btn_view_reply_reply) TextView mName;
-    @InjectView(R.id.txt_view_reply_name) ImageButton mReply;
+    @InjectView(R.id.txt_view_reply_name) TextView mName;
+    @InjectView(R.id.btn_view_reply_reply) ImageButton mReply;
     @InjectView(R.id.txt_view_reply_time) RelativeTimeTextView mTime;
     @InjectView(R.id.txt_view_reply_content) TextView mContent;
 
